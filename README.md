@@ -12,7 +12,7 @@ This role will install all these applications in a Ubuntu-16.04 server:
   * [x2go-server](https://wiki.x2go.org/)
   * [mate-desktop](https://mate-desktop.org/)
 
-A dedicated user is added to the server (e.g. "seedboxuser") and all daemons (plexmediaserver, plexpy, sickrage, transmission-daemon) will run as this user.
+A dedicated user is added to the server (e.g. "seedboxuser") and all daemons (plexpy, sickrage, transmission-daemon) will run as this user.
 
 Few folders are created in the home folder of the seedbox user:
 
