@@ -1,0 +1,64 @@
+---
+
+- name: install unzip and fuse
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - unzip
+    - fuse
+
+
+- block:
+
+    - name: Download rclone (latest version)
+      get_url:
+        url: https://downloads.rclone.org/rclone-current-linux-amd64.zip
+        dest: /usr/local/src
+
+    - name: extract the rclone tarball (latest version) to /tmp
+      unarchive:
+        src: /usr/local/src/rclone-current-linux-amd64.zip
+        dest: /tmp
+        remote_src: yes
+
+  when: rclone_version == "latest"
+
+
+- block:
+
+    - name: Download rclone (custom version)
+      get_url:
+        url: https://github.com/ncw/rclone/releases/download/v{{ rclone_version }}/rclone-v{{ rclone_version }}-linux-amd64.zip
+        dest: /usr/local/src
+
+    - name: extract the rclone tarball (custom version) to /tmp
+      unarchive:
+        src: /usr/local/src/rclone-v{{ rclone_version }}-linux-amd64.zip
+        dest: /tmp
+        remote_src: yes
+
+  when: rclone_version != "latest"
+
+
+- name: Find the name of the created folder
+  find:
+    paths: /tmp
+    file_type: directory
+    patterns: "*rclone*"
+  register: created_dir
+
+- name: Copy rclone binary to /usr/local/bin
+  copy:
+    src: "{{ created_dir.files[0].path }}/rclone"
+    dest: /usr/local/bin/rclone
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+
+- name: delete temp dir
+  file:
+    path: "{{ created_dir.files[0].path }}"
+    state: absent

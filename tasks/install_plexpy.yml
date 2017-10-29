@@ -1,0 +1,63 @@
+---
+
+- name: Install git
+  apt:
+    name: git-core
+    state: present
+    update_cache: yes
+
+- name: Create folder /opt/plexpy to download the app
+  file:
+    path: /opt/plexpy
+    state: directory
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0755
+
+
+- block:
+
+    - name: Query what is the latest plexpy version
+      uri:
+        url: https://api.github.com/repos/JonnyWong16/plexpy/releases/latest
+        method: GET
+        return_content: yes
+        status_code: 200
+        body_format: json
+      register: result_json
+      changed_when: false
+
+    - name: Download plexpy (latest version)
+      git:
+        repo: https://github.com/JonnyWong16/plexpy/
+        dest: /opt/plexpy
+        version: "{{ (result_json.content|from_json).tag_name }}"
+      become: true
+      become_user: "{{ seedbox_user }}"
+
+  when: plexpy_version == "latest"
+
+
+- name: Download plexpy (custom version)
+  git:
+    repo: https://github.com/JonnyWong16/plexpy/
+    dest: /opt/plexpy
+    version: "{{ plexpy_version }}"
+  become: true
+  become_user: "{{ seedbox_user }}"
+  when: plexpy_version != "latest"
+
+- name: Copy systemd config file for plexpy
+  template:
+    src: plexpy.systemd.service
+    dest: /etc/systemd/system/plexpy.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable and start plexpy systemd service
+  systemd:
+    name: plexpy
+    state: started
+    enabled: yes
+    daemon_reload: yes

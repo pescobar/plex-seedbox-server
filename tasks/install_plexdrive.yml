@@ -1,0 +1,63 @@
+---
+
+- name: install fuse
+  apt:
+    name: fuse
+    state: present
+    update_cache: yes
+
+- name: Create folder to mount plexdrive
+  file:
+    path: "/home/{{ seedbox_user }}/plexdrive"
+    state: directory
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0755
+
+- name: Create folder for plexdrive config
+  file:
+    path: "/home/{{ seedbox_user }}/.plexdrive"
+    state: directory
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0700
+
+- name: Copy plexdrive config
+  template:
+    src: plexdrive_config.template
+    dest: "/home/{{ seedbox_user }}/.plexdrive/config.json"
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0600
+
+- block:
+
+    - name: Query what is the latest plexdrive version
+      uri:
+        url: https://api.github.com/repos/dweidenfeld/plexdrive/releases/latest
+        method: GET
+        return_content: yes
+        status_code: 200
+        body_format: json
+      register: result_json
+      changed_when: false
+
+    - name: Download latest plexdrive version to /usr/local/bin
+      get_url:
+        url: https://github.com/dweidenfeld/plexdrive/releases/download/{{ (result_json.content|from_json).tag_name }}/plexdrive-linux-amd64
+        dest: /usr/local/bin/plexdrive
+        owner: root
+        group: root
+        mode: 0755
+
+  when: plexdrive_version == "latest"
+
+
+- name: Download custom plexdrive version to /usr/local/bin
+  get_url:
+    url: "https://github.com/dweidenfeld/plexdrive/releases/download/{{ plexdrive_version }}/plexdrive-linux-amd64"
+    dest: /usr/local/bin/plexdrive
+    owner: root
+    group: root
+    mode: 0755
+  when: plexdrive_version != "latest"

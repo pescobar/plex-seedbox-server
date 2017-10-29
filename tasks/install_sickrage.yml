@@ -1,0 +1,64 @@
+---
+
+- name: Install some dependencies for sickrage
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - unrar-free
+    - git-core
+    - openssl
+    - libssl-dev
+    - python2.7
+
+- name: Create folder /opt/sickrage
+  file:
+    path: /opt/sickrage
+    state: directory
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0755
+
+- name: Download sickrage code (custom version)
+  git:
+    repo: 'https://github.com/SickRage/SickRage.git'
+    dest: /opt/sickrage
+    version: "{{ sickrage_version }}"
+  become: true
+  become_user: "{{ seedbox_user }}"
+
+- block:
+
+    - name: Copy systemd config file
+      copy:
+        src: /opt/sickrage/runscripts/init.systemd
+        dest: /etc/systemd/system/sickrage.service
+        remote_src: yes
+
+    - name: adjust sickrage systemd config file to run as custom user
+      lineinfile:
+        path: /etc/systemd/system/sickrage.service
+        regexp: '^User=sickrage'
+        line: 'User={{ seedbox_user }}'
+
+    - name: adjust sickrage systemd config file to run as custom group
+      lineinfile:
+        path: /etc/systemd/system/sickrage.service
+        regexp: '^Group=sickrage'
+        line: 'Group={{ seedbox_user }}'
+
+    - name: make sure permissions of systemd file are correct
+      file:
+        path: /etc/systemd/system/sickrage.service
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: start and enable the sickrage systemd service
+      systemd:
+        name: sickrage
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+  when: ansible_service_mgr == 'systemd'

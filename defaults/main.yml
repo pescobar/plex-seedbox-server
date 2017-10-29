@@ -1,0 +1,19 @@
+---
+# defaults file for plex-seedbox-server
+
+seedbox_user: "seedboxuser"
+seedbox_user_pass: "$6$d/1YpMKH.$gUm/I9zaJ5Tvd6I8w8TI.FQrdNRhYaMr3iAZv0cbE2UctSR656gU.R2Z1faXI5NLjxT0laqv8jC9m6Kv78P071"
+
+plexmediaserver_version: "1.9.4.4325-1bf240a65"
+
+plexdrive_version: "latest"
+plexdrive_client_id: "AAAAAAAAAAAAAAAAAA.apps.googleusercontent.com"
+plexdrive_client_secret: "adsfadfadfadfadfadfasdf"
+
+rclone_version: "latest"
+
+plexpy_version: "latest"
+
+sickrage_version: "v2017.06.05-1"
+
+install_x2go_and_mate: False

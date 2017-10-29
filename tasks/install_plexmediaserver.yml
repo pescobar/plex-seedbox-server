@@ -1,0 +1,41 @@
+---
+
+- name: Download plexmediaserver deb
+  get_url:
+    url: "https://downloads.plex.tv/plex-media-server/{{ plexmediaserver_version }}/plexmediaserver_{{ plexmediaserver_version }}_amd64.deb"
+    dest: /tmp
+
+- name: Install plexmediaserver deb
+  apt:
+    deb: "/tmp/plexmediaserver_{{ plexmediaserver_version }}_amd64.deb"
+
+- name: Create folder /etc/systemd/system/plexmediaserver.service.d/ to override plexmediaserver systemd settings
+  file:
+    path: /etc/systemd/system/plexmediaserver.service.d/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create file /etc/systemd/system/plexmediaserver.service.d/override.conf
+  file:
+    path: /etc/systemd/system/plexmediaserver.service.d/override.conf
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add custom systemd settings to run plexmediaserver service as {{ seedbox_user }}
+  blockinfile:
+    path: /etc/systemd/system/plexmediaserver.service.d/override.conf
+    block: |
+      [Service]
+      User={{ seedbox_user }}
+      Group={{ seedbox_user }}
+
+- name: Start and enable plexmediaserver service
+  systemd:
+    name: plexmediaserver
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

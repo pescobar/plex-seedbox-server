@@ -1,0 +1,1 @@
+{"ClientID":"{{ plexdrive_client_id }}","ClientSecret":"{{ plexdrive_client_secret }}"}

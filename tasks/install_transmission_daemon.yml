@@ -1,0 +1,38 @@
+---
+
+- name: Install transmission-daemon
+  apt:
+    name: transmission-daemon
+    state: present
+    update_cache: yes
+
+- name: Create folder /etc/systemd/system/transmission-daemon.service.d/ to override transmission systemd settings
+  file:
+    path: /etc/systemd/system/transmission-daemon.service.d/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create file /etc/systemd/system/transmission-daemon.service.d/override.conf
+  file:
+    path: /etc/systemd/system/transmission-daemon.service.d/override.conf
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add custom systemd settings to run transmission-daemon service as {{ seedbox_user }}
+  blockinfile:
+    path: /etc/systemd/system/transmission-daemon.service.d/override.conf
+    block: |
+      [Service]
+      User={{ seedbox_user }}
+      Group={{ seedbox_user }}
+
+- name: Start and enable transmission-daemon service
+  systemd:
+    name: transmission-daemon
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

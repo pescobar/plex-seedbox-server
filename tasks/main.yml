@@ -1,0 +1,120 @@
+---
+# tasks file for plex-seedbox-server
+
+- name: Add the local user account to execute all the services
+  user:
+    name: "{{ seedbox_user }}"
+    groups: adm,sudo
+    password: "{{ seedbox_user_pass }}"
+  register: seedbox_user_info
+
+- name: Create folders to save torrents
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0755
+  with_items:
+    - "/home/{{ seedbox_user }}/torrents"
+    - "/home/{{ seedbox_user }}/torrents/temp"
+    - "/home/{{ seedbox_user }}/torrents/completed"
+
+- name: install some utilities
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - git-core
+    - vim
+    - screen
+    - tmux
+    - htop
+
+
+- name: Check if plexdrive binary is installed in /usr/local/bin
+  stat:
+    path: /usr/local/bin/plexdrive
+  register: plexdrive_binary
+
+- name: Install plexdrive if not installed
+  import_tasks: install_plexdrive.yml
+  when: not plexdrive_binary.stat.exists
+
+
+- name: Check if rclone binary is installed in /usr/local/bin
+  stat:
+    path: /usr/local/bin/rclone
+  register: rclone_binary
+
+- name: Install rclone if not installed
+  import_tasks: install_rclone.yml
+  when: not rclone_binary.stat.exists
+
+
+- name: Check if plexmediaserver is installed
+  stat:
+    path: /etc/systemd/system/multi-user.target.wants/plexmediaserver.service
+  register: plexmediaserver_systemd_file
+
+- name: Install plexmediaserver if not installed
+  import_tasks: install_plexmediaserver.yml
+  when: not plexmediaserver_systemd_file.stat.exists
+
+
+- name: Check if pleypy is installed
+  stat:
+    path: /opt/plexpy
+  register: plexpy_folder
+
+- name: Install plexpy if not installed
+  import_tasks: install_plexpy.yml
+  when: not plexpy_folder.stat.exists
+
+
+- name: Check if sickrage is installed
+  stat:
+    path: /etc/systemd/system/sickrage.service
+  register: sickrage_systemd_file
+
+- name: Install sickrage if not installed
+  import_tasks: install_sickrage.yml
+  when: not sickrage_systemd_file.stat.exists
+
+
+- name: Check if transmission-daemon is installed
+  stat:
+    path: /etc/systemd/system/multi-user.target.wants/transmission-daemon.service
+  register: transmission_systemd_file
+
+- name: Install transmission if not installed
+  import_tasks: install_transmission_daemon.yml
+  when: not transmission_systemd_file.stat.exists
+
+
+- name: Install X2Go and mate if variable install_x2go_and_mate is True
+  import_tasks: install_x2go_and_mate.yml
+  when: install_x2go_and_mate == True
+
+- name: Add cron entry to execute plexdrive on reboot inside a tmux session
+  cron:
+    name: "mount plexdrive"
+    special_time: reboot
+    job: "tmux new-session -d -s plexdrive 'plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive'"
+
+
+- debug:
+    msg: "plexmediaserver is accessible in http://{{ ansible_default_ipv4.address }}:32400"
+
+- debug:
+    msg: "Plexpy is accessible in http://{{ ansible_default_ipv4.address }}:8181"
+
+- debug:
+    msg: "Sickrage is accessible in http://{{ ansible_default_ipv4.address }}:8081"
+
+- debug:
+    msg: "Now login to the machine as {{ seedbox_user }} and mount plexdrive inside screen or tmux"
+
+- debug:
+    msg: "plexdrive command: plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive"
