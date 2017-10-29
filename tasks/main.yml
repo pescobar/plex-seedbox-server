@@ -100,6 +100,7 @@
 - name: Add cron entry to execute plexdrive on reboot inside a tmux session
   cron:
     name: "mount plexdrive"
+    user: "{{ seedbox_user }}"
     special_time: reboot
     job: "tmux new-session -d -s plexdrive 'plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive'"
 
