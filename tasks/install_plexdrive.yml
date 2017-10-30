@@ -30,6 +30,22 @@
     group: "{{ seedbox_user }}"
     mode: 0600
 
+- name: Copy script to mount plexdrive
+  template:
+    src: mount-plexdrive.sh.template
+    dest: "/home/{{ seedbox_user }}/.plexdrive/mount-plexdrive.sh"
+    owner: "{{ seedbox_user }}"
+    group: "{{ seedbox_user }}"
+    mode: 0755
+
+- name: Add cron entry to execute plexdrive on reboot inside a tmux session
+  cron:
+    name: "mount plexdrive"
+    user: "{{ seedbox_user }}"
+    special_time: reboot
+    job: "/home/{{ seedbox_user }}/.plexdrive/mount-plexdrive.sh"
+
+
 - block:
 
     - name: Query what is the latest plexdrive version

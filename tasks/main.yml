@@ -97,12 +97,6 @@
   import_tasks: install_x2go_and_mate.yml
   when: install_x2go_and_mate == True
 
-- name: Add cron entry to execute plexdrive on reboot inside a tmux session
-  cron:
-    name: "mount plexdrive"
-    user: "{{ seedbox_user }}"
-    special_time: reboot
-    job: "tmux new-session -d -s plexdrive 'plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive'"
 
 
 - debug:
@@ -115,7 +109,4 @@
     msg: "Sickrage is accessible in http://{{ ansible_default_ipv4.address }}:8081"
 
 - debug:
-    msg: "Now login to the machine as {{ seedbox_user }} and mount plexdrive inside screen or tmux"
-
-- debug:
-    msg: "plexdrive command: plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive"
+    msg: "Now login to the machine as {{ seedbox_user }} and mount plexdrive inside screen or tmux. Check script /home/{{ seedbox_user }}/.plexdrive/mount-plexdrive.sh for details"
