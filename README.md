@@ -27,16 +27,16 @@ By default Mate and X2Go won't be installed unless you define "install_x2go_and_
 Role Variables
 --------------
 
-* seedbox_user: "seedboxuser"
-* seedbox_user_pass: "pass_hash"     [how to generate crypted pass](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module)
-* plexmediaserver_version: "1.9.4.4325-1bf240a65"
-* plexdrive_version: "latest"
-* plexdrive_client_id: "AAAAAAAAAAAAAAAAAA.apps.googleusercontent.com"
-* plexdrive_client_secret: "adsfadfadfadfadfadfasdf"
-* rclone_version: "latest"
-* plexpy_version: "latest"
-* sickrage_version: "v2017.06.05-1"   (defining a sickrage version is mandatory. I don't know why I cannot query latest release in https://api.github.com/repos/SickRage/SickRage/releases/latest ?)
-* install_x2go_and_mate: False
+* `seedbox_user: "seedboxuser"`
+* `seedbox_user_pass: "pass_hash"`     [how to generate crypted pass](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module)
+* `plexmediaserver_version: "1.9.4.4325-1bf240a65"`
+* `plexdrive_version: "latest"`
+* `plexdrive_client_id: "AAAAAAAAAAAAAAAAAA.apps.googleusercontent.com"`
+* `plexdrive_client_secret: "adsfadfadfadfadfadfasdf"`
+* `rclone_version: "latest"`
+* `plexpy_version: "latest"`
+* `sickrage_version: "v2017.06.05-1"`   (defining a sickrage version is mandatory. I don't know why I cannot query latest release in https://api.github.com/repos/SickRage/SickRage/releases/latest ?)
+* `install_x2go_and_mate: False`
 
 Check available versions in these urls:
  * [plexmediaserver](https://www.plex.tv/es/downloads/)
