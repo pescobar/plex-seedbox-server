@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # This script will launch a new tmux session named "plexdrive"
-# Then execute "plexdrive mount -c ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} -o allow_other /home/{{ seedbox_user }}/plexdrive" inside tmux
+# Then execute "plexdrive mount --config ~/.plexdrive --uid={{ seedbox_user_info.uid }} --gid={{ seedbox_user_info.group }} --fuse-options allow_other /home/{{ seedbox_user }}/plexdrive" inside tmux
 # Then detach the tmux session 
 
 # this script should be added to the crontab of user "{{ seedbox_user }}" to be execute on reboot. Cron entry example:
-# @reboot ~/.plexdrive/mount-plexdrive.sh
+# @reboot /home/{{ seedbox_user }}/.plexdrive/mount-plexdrive.sh
 
 tmux new-session -d -s plexdrive
-tmux send-keys plexdrive Space mount Space -c Space ~/.plexdrive Space --uid={{ seedbox_user_info.uid }} Space --gid={{ seedbox_user_info.group }} Space -o Space allow_other Space /home/{{ seedbox_user }}/plexdrive C-m
+tmux send-keys plexdrive Space mount Space --config Space ~/.plexdrive Space --uid={{ seedbox_user_info.uid }} Space --gid={{ seedbox_user_info.group }} Space --fuse-options Space allow_other Space /home/{{ seedbox_user }}/plexdrive C-m
 tmux detach -s plexdrive
