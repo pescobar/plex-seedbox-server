@@ -6,6 +6,12 @@
     state: present
     update_cache: yes
 
+- name: Modify /etc/fuse.conf so non root users can use option "allow_other"
+  lineinfile:
+    path: /etc/fuse.conf
+    regexp: '^#user_allow_other'
+    line: 'user_allow_other'
+
 - name: Create folder to mount plexdrive
   file:
     path: "/home/{{ seedbox_user }}/plexdrive"

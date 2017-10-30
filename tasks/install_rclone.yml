@@ -9,6 +9,12 @@
     - unzip
     - fuse
 
+- name: Modify /etc/fuse.conf so non root users can use option "allow_other"
+  lineinfile:
+    path: /etc/fuse.conf
+    regexp: '^#user_allow_other'
+    line: 'user_allow_other'
+
 
 - block:
 
