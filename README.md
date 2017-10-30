@@ -16,10 +16,10 @@ A dedicated user is added to the server (e.g. "seedboxuser") and all daemons (pl
 
 Few folders are created in the home folder of the seedbox user:
 
- * $HOME/torrents/temp
- * $HOME/torrents/completed
- * $HOME/plexdrive (to mount plexdrive)
- * $HOME/.plexdrive (to store plexdrive config)
+ * `$HOME/torrents/temp`
+ * `$HOME/torrents/completed`
+ * `$HOME/plexdrive` (to mount plexdrive)
+ * `$HOME/.plexdrive` (to store plexdrive config and scripts)
 
 By default Mate and X2Go won't be installed unless you define "install_x2go_and_mate: True"
 
@@ -39,11 +39,11 @@ Role Variables
 * `install_x2go_and_mate: False`
 
 Check available versions in these urls:
- * [plexmediaserver](https://www.plex.tv/es/downloads/)
- * [plexdrive](https://github.com/dweidenfeld/plexdrive/releases)
- * [rclone](https://github.com/ncw/rclone/releases)
- * [plexpy](https://github.com/JonnyWong16/plexpy/releases)
- * [sickrage](https://github.com/SickRage/SickRage/releases)
+ * [sickrage versions](https://github.com/SickRage/SickRage/releases)
+ * [plexmediaserver versions](https://www.plex.tv/es/downloads/)
+ * [plexdrive versions](https://github.com/dweidenfeld/plexdrive/releases)
+ * [rclone versions](https://github.com/ncw/rclone/releases)
+ * [plexpy versions](https://github.com/JonnyWong16/plexpy/releases)
 
 Check here [how to generate your client-id for plexdrive](https://rclone.org/drive/#making-your-own-client-id) 
 
